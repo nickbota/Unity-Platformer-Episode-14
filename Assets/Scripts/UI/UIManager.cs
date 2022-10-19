@@ -3,58 +3,40 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] private GameObject pauseUI;
-    [SerializeField] private GameObject gameOverUI;
+    [SerializeField] private GameObject gameOverScreen;
     [SerializeField] private AudioClip gameOverSound;
 
     private void Awake()
     {
-        PauseGame(false);
-    }
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (pauseUI.activeInHierarchy)
-                PauseGame(false);
-            else
-                PauseGame(true);
-        }
+        gameOverScreen.SetActive(false);
     }
 
     //Game over function
     public void GameOver()
     {
-        gameOverUI.SetActive(true);
+        gameOverScreen.SetActive(true);
         SoundManager.instance.PlaySound(gameOverSound);
     }
 
-    //Pause menu functions
-    public void PauseGame(bool _status)
-    {
-        pauseUI.SetActive(_status);
-        Time.timeScale = System.Convert.ToInt32(!_status);
-    }
-    public void BackToMenu()
-    {
-        SceneManager.LoadScene(0);
-    }
-    public void Quit()
-    {
-        Application.Quit();
-    }
-    public void ChangeSoundVolume()
-    {
-        SoundManager.instance.ChangeSoundVolume(20);
-        //Update UI text
-    }
-    public void ChangeMusicVolume()
-    {
-        SoundManager.instance.ChangeMusicVolume(20);
-        //Update UI text
-    }
+    //Restart level
     public void Restart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    //Activate game over screen
+    public void MainMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+    //Quit game/exit play mode if in Editor
+    public void Quit()
+    {
+        Application.Quit(); //Quits the game (only works in build)
+
+        #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false; //Exits play mode
+        #endif
     }
 }
